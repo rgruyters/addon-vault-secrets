@@ -1,0 +1,42 @@
+{
+  "name": "Vault Secrets",
+  "version": "0.1.0",
+  "slug": "vault-secrets",
+  "description": "Use Vault to store and retrieve secrets",
+  "url": "https://github.com/rgruyters/addon-vault-secrets",
+  "startup": "before",
+  "boot": "auto",
+  "arch": [
+    "armhf",
+    "armv7",
+    "amd64",
+    "i386"
+  ],
+  "map": [
+    "config:rw",
+    "ssl:rw"
+  ],
+  "options": {
+    "ssl": true,
+    "cafile": "cacert.pem",
+    "certfile": "fullchain.pem",
+    "keyfile": "privkey.pem",
+    "vault_addr": "",
+    "vault_token": "",
+    "vault_retry_attempts": 5,
+    "vault_retry_backoff": "100ms",
+    "log_level": "info"
+  },
+  "schema": {
+    "ssl": "bool",
+    "cafile": "str",
+    "certfile": "str",
+    "keyfile": "str",
+    "vault_addr": "url",
+    "vault_token": "match(.+)",
+    "vault_retry_attempts": "int",
+    "vault_retry_backoff": "match(.+)",
+    "log_level": "match(^(debug|info|warn|err)$)"
+  }
+}
+

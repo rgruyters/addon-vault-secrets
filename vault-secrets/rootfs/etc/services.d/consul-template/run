@@ -1,0 +1,43 @@
+#!/bin/bash
+
+set -e
+
+CONFIG_PATH=/data/options.json
+
+VAULT_ADDR=$(jq --raw-output ".vault_addr" $CONFIG_PATH)
+VAULT_TOKEN=$(jq --raw-output ".vault_token" $CONFIG_PATH)
+#
+LOG_LEVEL=$(jq --raw-output ".log_level" $CONFIG_PATH)
+RETRY_ATTEMPTS=$(jq --raw-output ".vault_retry_attempts" $CONFIG_PATH)
+RETRY_BACKOFF=$(jq --raw-output ".vault_retry_backoff" $CONFIG_PATH)
+#
+SSL_ENABLED=$(jq --raw-output ".ssl" $CONFIG_PATH)
+CACERT_FILE=/ssl/$(jq --raw-output ".cafile" $CONFIG_PATH)
+CERT_FILE=/ssl/$(jq --raw-output ".certfile" $CONFIG_PATH)
+KEY_FILE=/ssl/$(jq --raw-output ".keyfile" $CONFIG_PATH)
+
+
+export VAULT_TOKEN VAULT_ADDR
+
+# Initial options we want to set
+#
+_opts="-log-level=$LOG_LEVEL -vault-renew-token -vault-retry \
+  -vault-retry-attempts $RETRY_ATTEMPTS -vault-retry-backoff $RETRY_BACKOFF"
+
+# When SSL_ENABLED is set add the extra options for SSL support
+#
+if [ $SSL_ENABLED == "true" ]; then
+  if [ -e $CACERT_FILE -a -e $CERT_FILE -a -e $KEY_FILE ]; then
+    _opts="$_opts --vault-ssl -vault-ssl-ca-cert=$CACERT_FILE \
+      --vault-ssl-cert=$CERT_FILE --vault-ssl-key=$KEY_FILE"
+  fi
+
+  echo "When enabling SSL you should add the appropiate cafile, certfile, and keyfile to /ssl path..."
+  exit 1
+fi
+
+# Exec consul-template with all the options
+#
+exec /consul-template \
+  $_opts \
+  -template "/etc/consul-template.d/hassio_secrets.ctmpl:/config/secrets.yaml"
