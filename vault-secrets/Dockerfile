@@ -7,7 +7,7 @@ ARG BUILD_REF
 ARG BUILD_VERSION
 
 ARG CT_URL=https://releases.hashicorp.com/consul-template
-ARG CT_VERSION=0.20.0
+ARG CT_VERSION
 ARG CT_ARCH=$BUILD_ARCH
 
 ENV LANG C.UTF-8

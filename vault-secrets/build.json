@@ -6,5 +6,7 @@
     "armv7": "hassioaddons/base-armv7:3.1.0",
     "i386": "hassioaddons/base-i386:3.1.0"
   },
-  "args": {}
+  "args": {
+    "CT_VERSION": "0.21.0"
+  }
 }
