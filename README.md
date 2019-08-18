@@ -25,6 +25,10 @@ Create the following policy:
 path "secret/hassio" {
   capabilities = ["read", "list"]
 }
+
+path "secret/hassio/*" {
+  capabilities = ["read"]
+}
 ```
 
 Add the policy to Vault service:
