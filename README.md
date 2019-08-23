@@ -22,10 +22,6 @@ Before using this add-on make sure you have created a Vault token with the corre
 Create the following policy:
 
 ```hcl
-path "secret/hassio" {
-  capabilities = ["read", "list"]
-}
-
 path "secret/hassio/*" {
   capabilities = ["read"]
 }
@@ -40,8 +36,13 @@ vault policy write hassio ./hassio_policy.hcl
 To able to access the Vault service, create a Vault token voor Home Assistant.
 
 ```bash
-vault token create -ttl=1h -policy=hassio -orphan
+vault token create -ttl=5m -policy=hassio -orphan
 ```
+
+**NOTE: Vault doesn't support blocking queries as a result changes are not
+instantly loaded into the secret file, but half the ttl value. So when a new
+token is created with ttl of 5 minutes it will check every 2,5 minutes.
+As such, a smaller ttl will force the addon to update more often.**
 
 ## Configuration
 
